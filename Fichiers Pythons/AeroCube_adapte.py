@@ -30,17 +30,27 @@ def computeCk(U_inf,chord):
 
 #--------------------------------------------------------------------------------
 
-def ClaCmaAilerons(d,a,b,s,m,n):
-    """d diamètre à l'ogive, a emplenture ailerons, b saumon, s envergure, 
-    m flèche(des ailerons),n nombre ailerons (3 ou 4 en config finale)"""
+def ClaCmaAilerons(d,a,b,s,m,n, supersonic=False):
+    """
+    Calcul de Cla et Cma pour un aileron d'après la théorie de Barrowman
+    
+    d diamètre à l'ogive, a emplenture ailerons, b saumon, s envergure, 
+    m flèche(des ailerons),n nombre ailerons (3 ou 4 en config finale)
+    """
 
 ## la longueur de référence est l'emplanture et la surface celle de la section du tube
 
     #ailerons
     e = m+b-a
     z=((m-a/2+b/2)**2+s**2)**1/2
+    
+    # ail = [ Xf, Cla ]
     ail=[e+(m*(a+2*b)/(3*(a+b))+1/6*(a+b-(a*b/(a+b)))),(4*n*(s/d)**2)/(1+(1+((2*z)/(a+b))**2)**1/2)]
     
+    if supersonic:
+        ail = [2*ail[0], 2*ail[1]]
+        
+    # Calcul de l'éventuelle interférence aéro entre les ailerons
     if n == 4 :
         ail_interference=[ail[0],ail[1]*(1+d/(2*s+d))]
     else :
@@ -53,7 +63,7 @@ def ClaCmaAilerons(d,a,b,s,m,n):
 
     return [Cla, Cma]
 
-""" """
+
 def computeLift(U_inf,Surf,chord,VecH,VecTeta,dCLa):
 
         """
