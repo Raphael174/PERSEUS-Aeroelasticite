@@ -18,7 +18,7 @@ def computePlotDamping(hDisp : list, tetaDisp: list , timeList: list):
     peaks_h     = []    #calcul des point max en h
     peaks_teta  = []    #calcul des point max en h  
     n = 5               # nombre de point considéré pour trouver une valeur max
-    b = 10
+    b = 1
         
     for i in range(b*n, len(hDisp)-b*n):
         if max(hDisp[i-n:i+n]) == hDisp[i]: #le tri des valeurs max
@@ -38,7 +38,7 @@ def computePlotDamping(hDisp : list, tetaDisp: list , timeList: list):
     """Creating two separate loops since h and teta may not 
     necessarily have the same number of peaks in a given simulation
     Also, multiple if-elseif statement to only take +ive consecutive values """
-    for i in range(1, len(peaks_h)):
+    for i in range(1, len(peaks_h)-1):
         if len(hMax) >= 5: 
             break #first if-statement to decide if there are enough data points
         elif hDisp[peaks_h[i]] > 0:
@@ -49,7 +49,7 @@ def computePlotDamping(hDisp : list, tetaDisp: list , timeList: list):
             TimeMaxH = []
 
     
-    for i in range(1, len(peaks_teta)): 
+    for i in range(1, len(peaks_teta)-1): 
         if len(tetaMax) >= 5: 
             break #first if-statement to decide if there are enough data points
         elif tetaDisp[peaks_teta[i]] > 0:
@@ -71,22 +71,22 @@ def computePlotDamping(hDisp : list, tetaDisp: list , timeList: list):
     for i in range(len(hMax)-1):
         delta_h = (np.log(hMax[i+1])-np.log(hMax[i]))
         current_zeta_h = delta_h / np.sqrt((2*PI)**2 + delta_h**2)
-        zeta_h.append(current_zeta_h)
+        zeta_h.append(round(current_zeta_h*100, 1))
         
     for i in range(len(tetaMax)-1):
         delta_teta = (np.log(tetaMax[i+1])-np.log(tetaMax[i]))
         current_zeta_teta = delta_teta / np.sqrt((2*PI)**2 + delta_teta**2)
-        zeta_teta.append(current_zeta_teta)
+        zeta_teta.append(round(current_zeta_teta*100, 1))
      
     avg_damping_h = .0
     if len(zeta_h) != 0:
-        avg_damping_h = round(sum(zeta_h) / len(zeta_h), 3)
+        avg_damping_h = round(sum(zeta_h) / len(zeta_h), 1)
     else:
         print("damping_h list has no values")
     var_damping_h = float("{:.3e}".format(np.var(zeta_h)))
     avg_damping_teta = .0
     if len(zeta_teta) != 0:
-        avg_damping_teta = round(sum(zeta_teta) / len(zeta_teta), 3)
+        avg_damping_teta = round(sum(zeta_teta) / len(zeta_teta), 1)
     else:
         print("damping_teta list has no values")
     var_damping_teta = float("{:.3e}".format(np.var(zeta_teta)))
@@ -96,17 +96,18 @@ def computePlotDamping(hDisp : list, tetaDisp: list , timeList: list):
     return data
 
 def computeFrequencies (Nb, posH, posTeta, MaxTime):
-    DispH2 = []
-    DispTeta2 = []
-    Ind1 = int(Nb / 2) - 1
-    DispH2 = posH[Ind1:-1]
-    DispTeta2 = posTeta[Ind1:-1]
+    # DispH2 = []
+    # DispTeta2 = []
+    # Ind1 = int(Nb / 2) - 1
+    # DispH2 = posH[Ind1:-1]
+    # DispTeta2 = posTeta[Ind1:-1]
     #
-    FFT1 = abs(fftpack.fft(DispH2))
+    FFT1 = abs(fftpack.fft(posH))  #FFT1 = abs(fftpack.fft(DispH2))
     FFTH = FFT1.tolist()
-    FFT2 = abs(fftpack.fft(DispTeta2))
+    FFT2 = abs(fftpack.fft(posTeta)) #FFT2 = abs(fftpack.fft(DispTeta2))
     FFTTeta = FFT2.tolist()
-    #
+
+    
     FFTH[0] = 0.
     FFTTeta[0] = 0.
     fH = 0.0
