@@ -74,7 +74,7 @@ start = timer()
 
 #%% DONNEES D'ENTREE
 
-
+comp = 1; #mettre à 1 pour prendre en compte le compressible
 IsH = 1  # Activate time marching for plunging at IsH=1
 IsTeta = 1 # Same with IsTheta
 
@@ -170,7 +170,7 @@ while U_inf <=15:
         
         ################# H
         
-        Lift =  computeLift(omega_teta, rho, dCl, a, b, c, U_inf, Surf, VecH, VecTeta) #1/(m*b) * computeLift(omega_teta, rho, dCl, a, b, c, U_inf, Surf, VecH, VecTeta)
+        Lift =  computeLift(omega_teta, rho, dCl, a, b, c, U_inf, Surf, VecH, VecTeta, comp) #1/(m*b) * computeLift(omega_teta, rho, dCl, a, b, c, U_inf, Surf, VecH, VecTeta)
         CouplingTerm = IsTeta*S0*VecTeta[2] #IsTeta*x_alpha* VecTeta[2] 
         StiffTerm =  StiffH*VecH[0] #omega_h**2 * VecH[0]
         DissTerm =  DissH*VecH[1] #2*zeta_h*omega_h**2 * VecH[1]
@@ -185,7 +185,7 @@ while U_inf <=15:
     
         ################# TETA
         
-        Moment = 1.0*computeMoment(omega_teta, rho, dCm, a, b, c, U_inf, Surf, VecH, VecTeta) # 1/(m*b**2) * computeMoment(omega_teta, rho, dCm, a, b, c, U_inf, Surf, VecH, VecTeta)
+        Moment = 1.0*computeMoment(omega_teta, rho, dCm, a, b, c, U_inf, Surf, VecH, VecTeta, comp) # 1/(m*b**2) * computeMoment(omega_teta, rho, dCm, a, b, c, U_inf, Surf, VecH, VecTeta)
         CouplingTerm =  IsH*S0*VecH[2] #sH * x_alpha * 1/(m*b) * VecH[2]
         StiffTerm = StiffTeta*(VecTeta[0]) # omega_teta**2 * r_alpha**2 * VecTeta[0]
         DissTerm =  DissTeta*VecTeta[1] #2*zeta_teta * r_alpha**2 * omega_teta**2 * VecTeta[1]
