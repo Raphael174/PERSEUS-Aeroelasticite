@@ -9,7 +9,7 @@ Created on Fri Apr 22 18:20:11 2022
 def UpdateVP(MassTerm, CouplingTerm, DissTerm, StiffTerm, AeroTerm, XI):
     A = [0.0, 0.0]
     A[0] = XI[1]
-    A[1] = MassTerm * (AeroTerm - CouplingTerm - StiffTerm - DissTerm)
+    A[1] = 1/MassTerm * (AeroTerm - CouplingTerm - StiffTerm - DissTerm)
     # MassTerm = M*b (if ddh)
     # MassTerm = 1/r_alpha**2 (if ddteta)
     return A
