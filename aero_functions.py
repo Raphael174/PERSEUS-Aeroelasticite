@@ -21,7 +21,7 @@ def computeQ(rho,U_inf):
     q_inf = 0.5*rho*U_inf**2
     return q_inf
 
-def computeLift(omega_teta, rho, dCl, a, b, c, U_inf, Surf, VecH, VecTeta):
+def computeLift(omega_teta, rho, dCl, a, b, c, U_inf, Surf, VecH, VecTeta, compressible):
     
     #Implmentation of Claudia's work
     #q_inf = (rho*b*U_inf**2*Surf)/2
@@ -37,12 +37,15 @@ def computeLift(omega_teta, rho, dCl, a, b, c, U_inf, Surf, VecH, VecTeta):
     CZ = -PI*( b/U_inf*VecTeta[1] + b/U_inf**2*VecH[2] - (a*b**2)/U_inf**2*VecTeta[2] )
     CZ += -dCl*computeCk(U_inf,c, omega_teta)*(VecTeta[0] + VecH[1]/U_inf + ( (0.5-a)*(b*VecTeta[1])/U_inf) )
     #------------------
-
+    
+    if (compressible == 1):
+        CZ = 1/(1-(U_inf/340)**2)**0.5*CZ
+        
     FA = computeQ(rho,U_inf)*Surf*(CZ) #compute force
     
     return (FA)
 
-def computeMoment(omega_teta, rho, dCm, a, b, c, U_inf, Surf, VecH, VecTeta):
+def computeMoment(omega_teta, rho, dCm, a, b, c, U_inf, Surf, VecH, VecTeta, compressible):
     #Implmentation of Claudia's work
     # q_inf = (rho*b*U_inf**2*Surf)/2
     # t_0 = b/U_inf
@@ -56,7 +59,10 @@ def computeMoment(omega_teta, rho, dCm, a, b, c, U_inf, Surf, VecH, VecTeta):
 
     CM = PI/2*((a*b)/U_inf**2*VecH[2] - b**2/U_inf**2*(1./8.+a**2)*VecTeta[2] + (a-0.5)*b*VecTeta[1]/U_inf)
     CM += dCm*computeCk(U_inf,c, omega_teta)*(VecTeta[0] + VecH[1]/U_inf + ((0.5-a)*(b*VecTeta[1])/U_inf))
-
+    
+    if (compressible == 1):
+        CM = 1/(1-(U_inf/340)**2)**0.5*CM
+        
     MA = computeQ(rho,U_inf)*Surf*c*(CM); #compute moment
 
     return (MA)
