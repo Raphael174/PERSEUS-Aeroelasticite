@@ -229,7 +229,27 @@ while U_inf <=15:
 
     # Estimation of frequencies
     FreqH, FreqTeta = computeFrequencies(NbIt, DispH, DispTeta, MaxTime)
+    
+    # Plot Frequency variations
+    if plot_if:
+        
+        # computing the window FFT of the signal
+        FreqH_list = window_fft(DispH, len(DispH)//6, len(DispH)//50, MaxTime)
+        FreqTeta_list = window_fft(DispTeta, len(DispTeta)//6, len(DispTeta)//50, MaxTime)
 
+        time_vect = np.linspace(0, MaxTime, len(FreqH_list))
+
+        plt.figure(figsize=(8, 6))
+        plt.title(f'Frequencies over time @ U_inf ={U_inf}')
+        plt.plot(time_vect, FreqH_list, "b-", label="Freq h")
+        plt.plot(time_vect, FreqTeta_list, "r-", label="Freq theta")
+        plt.xlabel('Time (s)')
+        plt.ylabel('Freq')
+        plt.legend(loc='best', frameon=True)
+
+        plt.show()
+    
+    
     # Storing current parameters
     current_frequency_h = round(FreqH, 2)
     current_frequency_teta = round(FreqTeta, 2)
