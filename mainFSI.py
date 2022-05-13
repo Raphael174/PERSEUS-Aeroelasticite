@@ -4,7 +4,7 @@ Created on Fri Apr 22 16:44:26 2022
 
 @author: Perseus - Raphaël AUBRY, Eliot MARTIN, Adrien SIMONNET
 
-########################## MODELE ADIMENSIONE ################################
+########################## MODELE ADIMENSIONNE ################################
 
 Parametres d'entrées
 --------------------
@@ -12,11 +12,11 @@ Parametres d'entrées
 Géometrie de l'aile     
 
 c = corde
-b = semi_corde
+b = semi-corde
 a =  semi-corde au centre elastique (%)
-r_alpha = rayon de gyration adimensioné
+r_alpha = rayon de gyration adimensionné
 x_CG = distance de CG à CE m
-x_alpha = distance adimensioné de CG à CE 
+x_alpha = distance adimensionné de CG à CE 
 
 Dans X. Amandolese et al. (2013), x_CG = a
 
@@ -33,7 +33,7 @@ rho = masse volumique de l'air kg/m^3
 M = Mach
 q_inf = pression dynamique (ici, rho*b*U_inf**2*Surf/2)
 t_0 = ratio b/U_inf (provenent du rapport de Claudia)
-k =     k = omega_teta*b/U_inf constante de theodorsen
+k = omega_teta*b/U_inf constante de theodorsen
 dCl = tangente Cl/alpha, 2*PI pour une plaque 2D
 dCm = tangente Cm/alpha
 
@@ -43,7 +43,7 @@ Valeurs intiales en h et teta
  part de teta est observé au début, et des frequences très différentes (omega_teta ~ 10*omega_h)
 -On remarque aussi que lorsque h0 = a et teta0 = 0, les frequences d'oscillations restent égales
  et les deux mouvement se suivent très clairement
-== Il est donc préférable d'utilsé une valeur non-zero pour teta0 et zero pour h0
+== Il est donc préférable d'utilser une valeur non-zero pour teta0 et zero pour h0
     avec teta0 = x*PI/180 (x = 1, 2, 3 °)
 
 """
@@ -69,8 +69,7 @@ plot_damping = False
 
 plot_frequency = True
 
-print("Simulation start ------------ \n")
-start = timer()
+print(" ------------ Simulation start ------------ \n")
 
 #%% DONNEES D'ENTREE
 
@@ -147,7 +146,8 @@ U_inf = 0.5
 run = 1
 #time_array = []
 
-while U_inf <=15:   
+while U_inf <=15:
+    start = timer()
                   
     # initialize vectors 
     VecH = [h0, 0.0, 0.0]
@@ -172,8 +172,8 @@ while U_inf <=15:
         
         Lift =  computeLift(omega_teta, rho, dCl, a, b, c, U_inf, Surf, VecH, VecTeta, comp) #1/(m*b) * computeLift(omega_teta, rho, dCl, a, b, c, U_inf, Surf, VecH, VecTeta)
         CouplingTerm = IsTeta*S0*VecTeta[2] #IsTeta*x_alpha* VecTeta[2] 
-        StiffTerm =  StiffH*VecH[0] #omega_h**2 * VecH[0]
-        DissTerm =  DissH*VecH[1] #2*zeta_h*omega_h**2 * VecH[1]
+        StiffTerm =  StiffH*VecH[0]         #omega_h**2 * VecH[0]
+        DissTerm =  DissH*VecH[1]           #2*zeta_h*omega_h**2 * VecH[1]
         MassTerm =  m
         
         if IsH:
@@ -186,10 +186,10 @@ while U_inf <=15:
         ################# TETA
         
         Moment = 1.0*computeMoment(omega_teta, rho, dCm, a, b, c, U_inf, Surf, VecH, VecTeta, comp) # 1/(m*b**2) * computeMoment(omega_teta, rho, dCm, a, b, c, U_inf, Surf, VecH, VecTeta)
-        CouplingTerm =  IsH*S0*VecH[2] #sH * x_alpha * 1/(m*b) * VecH[2]
+        CouplingTerm =  IsH*S0*VecH[2]     #sH * x_alpha * 1/(m*b) * VecH[2]
         StiffTerm = StiffTeta*(VecTeta[0]) # omega_teta**2 * r_alpha**2 * VecTeta[0]
-        DissTerm =  DissTeta*VecTeta[1] #2*zeta_teta * r_alpha**2 * omega_teta**2 * VecTeta[1]
-        InertiaTerm =  4.66e-5 #1/r_alpha**2
+        DissTerm =  DissTeta*VecTeta[1]    #2*zeta_teta * r_alpha**2 * omega_teta**2 * VecTeta[1]
+        InertiaTerm =  4.66e-5             #1/r_alpha**2
         
         if IsTeta:
             VecTetaNEW = IntegrateRK4(InertiaTerm, CouplingTerm, DissTerm, StiffTerm, Moment, VecTeta, DT)
@@ -199,7 +199,7 @@ while U_inf <=15:
             VecTeta = VecTetaNEW
     
         # data storage
-        DispH.append(VecH[0]) #round(VecH[0]*1000, 1)
+        DispH.append(VecH[0])       #round(VecH[0]*1000, 1)
         VelH.append(VecH[1])
         DispTeta.append(VecTeta[0]) #round(VecTeta[0]*180/PI, 1)
         VelTeta.append(VecTeta[1])
@@ -215,9 +215,9 @@ while U_inf <=15:
     # calcule de l'amortissement en h et teta à chaque simulation
  
     dampingOutput_Data                  = computePlotDamping(DispH, DispTeta, VecTime)
-    #avg_damping_h, var_damping_h        = .0
+    #avg_damping_h, var_damping_h       = .0
     avg_damping_h, var_damping_h        = dampingOutput_Data[0], dampingOutput_Data[1]
-    #avg_damping_teta, var_damping_teta  = .0
+    #avg_damping_teta, var_damping_teta = .0
     avg_damping_teta, var_damping_teta  = dampingOutput_Data[2], dampingOutput_Data[3]
     
     # verification de la variance des amortissement
@@ -244,7 +244,7 @@ while U_inf <=15:
         plt.plot(time_vect, FreqH_list, "b-", label="Freq h")
         plt.plot(time_vect, FreqTeta_list, "r-", label="Freq theta")
         plt.xlabel('Time (s)')
-        plt.ylabel('Freq')
+        plt.ylabel('Freq (Hz)')
         plt.legend(loc='best', frameon=True)
 
         plt.show()
@@ -267,7 +267,7 @@ while U_inf <=15:
     
     # debugging
     print("------------------------")
-    print('Run °', run) 
+    print('Run n°', run) 
     print("Running time in s= ",round(end-start, 2), "\n")
     print("MaxTime selected in s = ", MaxTime)
     print("\n")
