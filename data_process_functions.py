@@ -95,6 +95,7 @@ def computePlotDamping(hDisp : list, tetaDisp: list , timeList: list):
     
     return data
 
+
 def computeFrequencies (Nb, posH, posTeta, MaxTime):
     # DispH2 = []
     # DispTeta2 = []
@@ -118,3 +119,40 @@ def computeFrequencies (Nb, posH, posTeta, MaxTime):
     fTeta = (FFTTeta.index(max(FFTTeta[0:(np.size(FFTTeta) - 1) // 2]))) / (MaxTime / 2.)
     
     return fH, fTeta;
+
+
+def window_fft(Y, win_size, step_size, simulation_time):
+    """
+    Returns the main frequency components of a signal as function
+    of time by using a moving window to perform fft
+
+    - Y : signal to study
+    - win_size : size of the moving window
+    """
+
+    freq_list = []
+
+    N = len(Y)
+    win_time = win_size / N * simulation_time    # duration of a window
+
+    i = 0
+    while i < N:
+        sample = Y[i:i+win_size]
+
+        fft = abs(fftpack.fft(sample))
+        fft = fft.tolist()
+        f = (fft.index(max(fft[0:(np.size(fft) - 1) // 2]))) / (win_time / 2.)
+
+        freq_list.append(f)
+        i += step_size
+
+    """
+    if i < N-1:                                                     # A last smaller window may remain
+        last_win_time = (N - i) / win_size * simulation_time
+
+        last_fft = abs(fftpack.fft(Y[i:]))
+        last_fft = last_fft.tolist()
+        last_f = (last_fft.index(max(last_fft[0:(np.size(last_fft) - 1) // 2]))) / (last_win_time / 2.)
+        freq_list.append(last_f)"""
+
+    return freq_list
